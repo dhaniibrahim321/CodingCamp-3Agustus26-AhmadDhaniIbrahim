@@ -1,0 +1,629 @@
+/* Expense & Budget Visualizer — styles */
+
+/* =========================================================
+   1. CSS Custom Properties — Light Theme
+   ========================================================= */
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f5f5f5;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-accent: #2563eb;
+  --color-danger: #dc2626;
+  --color-border: #e2e8f0;
+  --color-shadow: rgba(0, 0, 0, 0.08);
+  --color-on-accent: #ffffff;
+}
+
+/* =========================================================
+   2. CSS Reset
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1, h2, h3, h4, h5, h6,
+p,
+ul, ol, li,
+form,
+fieldset,
+figure,
+blockquote,
+dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================================
+   3. Dark Theme — overrides via data-theme attribute
+   ========================================================= */
+[data-theme="dark"] {
+  --color-bg: #121212;
+  --color-surface: #1e1e1e;
+  --color-text-primary: #f1f1f1;
+  --color-text-secondary: #a0a0a0;
+  --color-accent: #60a5fa;
+  --color-danger: #f87171;
+  --color-border: #2d2d2d;
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  /* Text color to use ON TOP of --color-accent buttons.
+     White-on-#60a5fa is only ~2.5:1 contrast (fails WCAG AA 4.5:1),
+     so dark mode uses a near-black label instead. */
+  --color-on-accent: #0f172a;
+}
+
+/* =========================================================
+   4. Base / Body
+   ========================================================= */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* =========================================================
+   5. Utility
+   ========================================================= */
+.hidden {
+  display: none !important;
+}
+
+/* =========================================================
+   6. Header — flexbox: left (title + balance), right (toggle)
+   ========================================================= */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 4px var(--color-shadow);
+  /* Req 3.1 — always visible at top */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Group title + balance together on the left */
+header .header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+#balance-display {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+/* Theme toggle on the right */
+#theme-toggle {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+#theme-toggle:hover,
+#theme-toggle:focus-visible {
+  background-color: var(--color-surface);
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   7. Tab Navigation
+   ========================================================= */
+#summary-section {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+#tab-nav {
+  display: flex;
+  gap: 0;
+  padding: 0 1.5rem;
+}
+
+#tab-nav button {
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+#tab-nav button:hover {
+  color: var(--color-text-primary);
+}
+
+#tab-nav button.active,
+#tab-nav button[aria-selected="true"] {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+#monthly-summary {
+  padding: 1rem 1.5rem;
+}
+
+/* =========================================================
+   8. Main Grid — two columns: (input + list) | chart
+      Media queries (task 16) will make it single-column on mobile
+   ========================================================= */
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "input  chart"
+    "list   chart";
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+#input-section  { grid-area: input; }
+#list-section   { grid-area: list; }
+#chart-section  { grid-area: chart; }
+
+/* =========================================================
+   9. Input Section & Form
+   ========================================================= */
+#input-section,
+#list-section,
+#chart-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px var(--color-shadow);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+#transaction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* =========================================================
+   10. Inputs & Select
+   ========================================================= */
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: auto;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+input[type="text"]::placeholder,
+input[type="number"]::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+/* Inline validation error */
+.field-error {
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+  min-height: 1.1em;
+}
+
+/* =========================================================
+   11. Buttons
+   ========================================================= */
+button[type="submit"],
+#add-category-btn {
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+button[type="submit"]:hover,
+#add-category-btn:hover {
+  opacity: 0.88;
+  box-shadow: 0 2px 6px var(--color-shadow);
+}
+
+button[type="submit"]:focus-visible,
+#add-category-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+button[type="submit"]:active,
+#add-category-btn:active {
+  opacity: 0.76;
+}
+
+/* =========================================================
+   12. Custom Category Section
+   ========================================================= */
+#custom-category-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#custom-category-section label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.custom-category-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.custom-category-controls input[type="text"] {
+  flex: 1;
+}
+
+#add-category-btn {
+  flex-shrink: 0;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.9375rem;
+}
+
+/* =========================================================
+   13. Transaction List — Req 2.2: scrollable, isolated
+   ========================================================= */
+#transaction-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* smooth scroll for better UX */
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling (Webkit) */
+#transaction-list::-webkit-scrollbar {
+  width: 6px;
+}
+#transaction-list::-webkit-scrollbar-track {
+  background: var(--color-bg);
+  border-radius: 3px;
+}
+#transaction-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+/* Individual list item — flex row */
+#transaction-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+#transaction-list li:hover {
+  background-color: color-mix(in srgb, var(--color-accent) 6%, var(--color-bg));
+}
+
+/* Item name */
+.transaction-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Amount */
+.transaction-amount {
+  font-weight: 600;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+/* Category badge */
+.transaction-category {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 0.125rem 0.5rem;
+  white-space: nowrap;
+}
+
+/* Delete button inside list item — Req 9.1: min 44×44px touch target */
+.transaction-delete {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.375rem 0.625rem;
+  background: transparent;
+  color: var(--color-danger);
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.transaction-delete:hover,
+.transaction-delete:focus-visible {
+  background-color: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  border-color: var(--color-danger);
+  outline: none;
+}
+
+/* =========================================================
+   14. Chart Section
+   ========================================================= */
+#chart-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+#expense-chart {
+  max-width: 100%;
+  max-height: 320px;
+}
+
+#chart-placeholder {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+/* =========================================================
+   15. Balance Overflow Indicator — Req 3.6
+   ========================================================= */
+.balance-overflow {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-danger);
+  vertical-align: middle;
+}
+
+/* =========================================================
+   16. Toast Notifications — Req 1.7, 2.5, 8.4, 8.5
+   ========================================================= */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  z-index: 9999;
+  max-width: 320px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: toast-enter 0.3s ease;
+}
+
+.toast-error   { background: var(--color-danger, #dc2626); }
+.toast-warning { background: #f59e0b; }
+.toast-info    { background: var(--color-accent, #2563eb); }
+
+.toast-exit { animation: toast-exit 0.3s ease forwards; }
+
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(20px); }
+}
+
+/* =========================================================
+   17. Empty States — Req 2.6, 4.5, 6.5
+   ========================================================= */
+.empty-state {
+  display: block;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+}
+
+/* Chart CDN failure message — Req 9.5 */
+.chart-unavailable {
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+}
+
+/* =========================================================
+   18. Monthly Summary Rows — Req 6.2, 6.3, 6.4
+   ========================================================= */
+#monthly-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.month-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.month-label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.month-total {
+  font-weight: 600;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+/* =========================================================
+   19. Storage Unavailable Banner — Req 8.2
+   ========================================================= */
+#storage-unavailable-banner {
+  font-size: 0.875rem;
+}
+
+/* =========================================================
+   20. Responsive Layout — Req 2.2, 7.1 (task 16)
+   ========================================================= */
+@media (max-width: 768px) {
+  header {
+    padding: 0.75rem 1rem;
+  }
+
+  header h1 {
+    font-size: 1.0625rem;
+  }
+
+  #tab-nav {
+    padding: 0 1rem;
+  }
+
+  #summary-section > #monthly-summary,
+  #monthly-summary {
+    padding: 1rem;
+  }
+
+  /* Single-column stacked layout: input form → transaction list → chart */
+  main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "input"
+      "list"
+      "chart";
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  /* Keep the transaction list scrollable rather than growing the page indefinitely */
+  #transaction-list {
+    max-height: 300px;
+  }
+
+  .custom-category-controls {
+    flex-wrap: wrap;
+  }
+
+  .custom-category-controls input[type="text"] {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    flex-wrap: wrap;
+  }
+
+  #tab-nav button {
+    flex: 1;
+    padding: 0.625rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
