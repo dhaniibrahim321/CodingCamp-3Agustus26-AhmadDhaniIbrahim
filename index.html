@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense &amp; Budget Visualizer</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-theme="light">
+
+  <header>
+    <div class="header-left">
+      <h1>Expense &amp; Budget Visualizer</h1>
+      <div id="balance-display" role="status" aria-live="polite" aria-atomic="true">Rp 0</div>
+    </div>
+    <button
+      id="theme-toggle"
+      aria-label="Ganti ke mode gelap"
+    >🌙</button>
+  </header>
+
+  <section id="summary-section">
+    <nav id="tab-nav" role="tablist" aria-label="Navigasi tampilan">
+      <button type="button" data-tab="main" class="active" role="tab" aria-selected="true" aria-controls="list-section chart-section">Transaksi</button>
+      <button type="button" data-tab="monthly" role="tab" aria-selected="false" aria-controls="monthly-summary">Ringkasan Bulanan</button>
+    </nav>
+    <div id="monthly-summary" hidden></div>
+  </section>
+
+  <main>
+    <section id="input-section">
+
+      <form id="transaction-form" novalidate>
+        <div class="form-group">
+          <label for="item-name">Nama Item</label>
+          <input
+            type="text"
+            id="item-name"
+            name="item-name"
+            maxlength="100"
+            placeholder="Contoh: Makan Siang"
+            autocomplete="off"
+            aria-describedby="item-name-error"
+          />
+          <span id="item-name-error" class="field-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Jumlah (Rp)</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            min="0.01"
+            max="999999999.99"
+            step="0.01"
+            placeholder="Contoh: 25000"
+            aria-describedby="amount-error"
+          />
+          <span id="amount-error" class="field-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Kategori</label>
+          <select
+            id="category"
+            name="category"
+            aria-describedby="category-error"
+          >
+            <option value="" disabled selected>-- Pilih Kategori --</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Fun">Fun</option>
+          </select>
+          <span id="category-error" class="field-error" role="alert" aria-live="polite"></span>
+        </div>
+
+        <button type="submit" aria-label="Tambah transaksi baru">Tambah Transaksi</button>
+      </form>
+
+      <div id="custom-category-section">
+        <label for="custom-category-input">Tambah Kategori Kustom</label>
+        <div class="custom-category-controls">
+          <input
+            type="text"
+            id="custom-category-input"
+            name="custom-category-input"
+            maxlength="50"
+            placeholder="Nama kategori baru"
+            autocomplete="off"
+            aria-describedby="custom-category-error"
+          />
+          <button
+            type="button"
+            id="add-category-btn"
+            aria-label="Tambah kategori kustom"
+          >+ Tambah</button>
+        </div>
+        <span id="custom-category-error" class="field-error" role="alert" aria-live="polite"></span>
+      </div>
+
+    </section>
+
+    <section id="list-section">
+      <ul id="transaction-list"></ul>
+    </section>
+
+    <section id="chart-section">
+      <canvas id="expense-chart"></canvas>
+      <p id="chart-placeholder">Belum ada data untuk divisualisasikan.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
